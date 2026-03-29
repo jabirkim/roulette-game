@@ -50,6 +50,11 @@
         </section>
 
         <section class="card slot-card">
+          <div class="top-action-bar">
+            <button id="spinButton" class="spin-button">스핀</button>
+            <button id="stopButton" class="ghost-button stop-button">스톱</button>
+          </div>
+
           <div class="slot-machine">
             <div class="slot-grid-wrap" id="slotGridWrap">
               <div class="slot-grid" id="slotGrid">
@@ -75,7 +80,6 @@
                 <span>베팅 금액</span>
                 <input id="betAmount" type="number" min="1000" step="1000" value="5000" />
               </label>
-              <button id="spinButton" class="spin-button">스핀</button>
             </div>
 
             <div class="preset-row">
