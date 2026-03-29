@@ -27,6 +27,7 @@ const elements = {
   betCount: document.getElementById("betCount"),
   betChips: document.getElementById("betChips"),
   clearBets: document.getElementById("clearBets"),
+  removeLastBet: document.getElementById("removeLastBet"),
   switchTurn: document.getElementById("switchTurn"),
   spinButton: document.getElementById("spinButton"),
   addNumberBet: document.getElementById("addNumberBet"),
@@ -126,6 +127,7 @@ function syncUi() {
   elements.currentBet.textContent = formatCurrency(totalBet);
   elements.spinButton.disabled = state.isSpinning || totalBet === 0;
   elements.clearBets.disabled = state.isSpinning || totalBet === 0;
+  elements.removeLastBet.disabled = state.isSpinning || totalBet === 0;
   elements.switchTurn.disabled = state.isSpinning;
 
   renderPlayers();
@@ -192,6 +194,18 @@ function clearBets() {
   if (state.isSpinning) return;
   currentPlayer().bets = [];
   setMessage(`${currentPlayer().name}의 베팅을 모두 비웠습니다.`);
+  syncUi();
+}
+
+function removeLastBet() {
+  if (state.isSpinning) return;
+  const bets = currentPlayer().bets;
+  if (!bets.length) {
+    setMessage(`${currentPlayer().name}이 취소할 베팅이 없습니다.`);
+    return;
+  }
+  const removed = bets.pop();
+  setMessage(`${currentPlayer().name} → ${describeBet(removed)} 베팅 하나를 취소했습니다.`);
   syncUi();
 }
 
@@ -282,6 +296,7 @@ elements.addNumberBet.addEventListener("click", () => {
 });
 
 elements.clearBets.addEventListener("click", clearBets);
+elements.removeLastBet.addEventListener("click", removeLastBet);
 elements.switchTurn.addEventListener("click", switchTurn);
 elements.spinButton.addEventListener("click", startSpin);
 window.addEventListener("resize", renderWheelFace);
