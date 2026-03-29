@@ -36,6 +36,9 @@ const elements = {
   spinButton: document.getElementById("spinButton"),
   resultText: document.getElementById("resultText"),
   slotGrid: document.getElementById("slotGrid"),
+  slotLines: document.getElementById("slotLines"),
+  fxLayer: document.getElementById("fxLayer"),
+  winBurst: document.getElementById("winBurst"),
   linePreview: document.getElementById("linePreview"),
   lineCount: document.getElementById("lineCount"),
 };
@@ -58,7 +61,81 @@ function renderGrid() {
   const cells = elements.slotGrid.querySelectorAll(".slot-cell");
   cells.forEach((cell, index) => {
     cell.textContent = state.grid[index];
+    cell.classList.remove("hit");
   });
+}
+
+function clearWinEffects() {
+  elements.slotLines.innerHTML = "";
+  elements.fxLayer.innerHTML = "";
+  elements.winBurst.classList.add("hidden");
+  elements.slotGrid.querySelectorAll(".slot-cell").forEach((cell) => cell.classList.remove("hit"));
+}
+
+function lineCenter(index) {
+  const col = index % 3;
+  const row = Math.floor(index / 3);
+  const x = 50 + col * 100;
+  const y = 50 + row * 100;
+  return { x, y };
+}
+
+function renderWinLines(lines) {
+  elements.slotLines.innerHTML = "";
+  if (!lines.length) return;
+
+  lines.forEach((line) => {
+    const start = lineCenter(line[0]);
+    const end = lineCenter(line[2]);
+    const lineEl = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    lineEl.setAttribute("x1", start.x);
+    lineEl.setAttribute("y1", start.y);
+    lineEl.setAttribute("x2", end.x);
+    lineEl.setAttribute("y2", end.y);
+    elements.slotLines.appendChild(lineEl);
+
+    line.forEach((idx) => {
+      const cell = elements.slotGrid.children[idx];
+      if (cell) cell.classList.add("hit");
+    });
+  });
+}
+
+function fireConfetti() {
+  const colors = ["#ff4d4d", "#ffd166", "#33d17a", "#7aa2ff", "#ff7ad9"];
+  elements.fxLayer.innerHTML = "";
+  for (let i = 0; i < 28; i += 1) {
+    const piece = document.createElement("span");
+    piece.className = "confetti";
+    piece.style.background = colors[i % colors.length];
+    piece.style.left = `${Math.random() * 100}%`;
+    piece.style.top = `${Math.random() * 20}%`;
+    piece.style.setProperty("--dx", `${(Math.random() - 0.5) * 180}px`);
+    piece.style.setProperty("--dy", `${140 + Math.random() * 120}px`);
+    elements.fxLayer.appendChild(piece);
+  }
+}
+
+function playWinFanfare() {
+  const AudioCtx = window.AudioContext || window.webkitAudioContext;
+  if (!AudioCtx) return;
+  const ctx = new AudioCtx();
+  const notes = [523.25, 659.25, 783.99, 1046.5];
+  const now = ctx.currentTime;
+  notes.forEach((freq, index) => {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = index % 2 === 0 ? "triangle" : "square";
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(0.0001, now + index * 0.09);
+    gain.gain.exponentialRampToValueAtTime(0.08, now + index * 0.09 + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + index * 0.09 + 0.15);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(now + index * 0.09);
+    osc.stop(now + index * 0.09 + 0.16);
+  });
+  setTimeout(() => ctx.close().catch(() => {}), 900);
 }
 
 function renderNet() {
@@ -90,6 +167,7 @@ function updateBet(amount) {
 
 function evaluateGrid() {
   const wins = [];
+  const winLines = [];
   let payout = 0;
 
   LINES.forEach((line, index) => {
@@ -98,10 +176,11 @@ function evaluateGrid() {
       const mult = PAYOUTS[a] || 3;
       payout += state.bet * mult;
       wins.push(`${index + 1}번 라인 ${a} x${mult}`);
+      winLines.push(line);
     }
   });
 
-  return { payout, wins };
+  return { payout, wins, winLines };
 }
 
 function renderWins(wins) {
@@ -121,6 +200,7 @@ function spin() {
     return;
   }
 
+  clearWinEffects();
   state.isSpinning = true;
   setMessage("슬롯 회전 중...");
   syncUi();
@@ -138,15 +218,21 @@ function spin() {
 }
 
 function finishSpin() {
-  const { payout, wins } = evaluateGrid();
+  const { payout, wins, winLines } = evaluateGrid();
   state.balance = state.balance - state.bet + payout;
   state.lastNet = payout - state.bet;
   state.isSpinning = false;
   renderWins(wins);
 
   if (wins.length) {
+    renderWinLines(winLines);
+    fireConfetti();
+    playWinFanfare();
+    elements.winBurst.classList.remove("hidden");
+    setTimeout(() => elements.winBurst.classList.add("hidden"), 900);
     setMessage(`당첨! ${wins.join(", ")} · 순손익 ${signedCurrency(state.lastNet)}`);
   } else {
+    clearWinEffects();
     setMessage(`꽝! 순손익 ${signedCurrency(state.lastNet)}`);
   }
 
