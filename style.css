@@ -282,8 +282,13 @@ small { color: rgba(245,233,200,0.72); }
   margin-top: 10px;
 }
 
+.wheel-action-top {
+  margin-top: 0;
+  margin-bottom: 12px;
+}
+
 .control-card { display: grid; gap: 10px; }
-.amount-row, .number-row, .section-head {
+.amount-row, .number-row, .section-head, .bet-tools-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -345,6 +350,7 @@ small { color: rgba(245,233,200,0.72); }
 .green { background: linear-gradient(180deg, rgba(20,107,68,0.96), rgba(10,69,43,0.96)); }
 .accent { background: linear-gradient(180deg, rgba(228,187,96,0.94), rgba(143,104,28,0.94)); color: #211205; font-weight: 700; }
 .ghost-button { background: transparent; border: 1px solid rgba(245,233,200,0.18); white-space: nowrap; }
+.danger-button { border-color: rgba(255, 123, 114, 0.38); color: #ffd2ce; }
 
 .bet-chips {
   display: flex;
@@ -402,7 +408,8 @@ small { color: rgba(245,233,200,0.72); }
   .topbar,
   .amount-row,
   .number-row,
-  .section-head { flex-direction: column; align-items: stretch; }
+  .section-head,
+  .bet-tools-row { flex-direction: column; align-items: stretch; }
   .stat-grid { grid-template-columns: 1fr 1fr; }
   .stat-grid .stat:last-child { grid-column: 1 / -1; }
   .wheel-stage { min-height: 170px; }
