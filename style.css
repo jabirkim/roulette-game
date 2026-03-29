@@ -91,7 +91,7 @@ small { color: rgba(245,233,200,0.72); }
 
 .main-grid {
   display: grid;
-  grid-template-columns: 420px 1fr;
+  grid-template-columns: 560px 1fr;
   gap: 12px;
 }
 
@@ -148,7 +148,7 @@ small { color: rgba(245,233,200,0.72); }
 
 .wheel {
   position: relative;
-  width: min(76vw, 360px);
+  width: min(88vw, 520px);
   aspect-ratio: 1;
   border-radius: 50%;
   border: 12px solid #6d4a24;
@@ -334,7 +334,7 @@ small { color: rgba(245,233,200,0.72); }
 
 @media (max-width: 920px) {
   .main-grid { grid-template-columns: 1fr; }
-  .wheel { width: min(66vw, 300px); }
+  .wheel { width: min(78vw, 420px); }
 }
 
 @media (max-width: 640px) {
@@ -346,7 +346,7 @@ small { color: rgba(245,233,200,0.72); }
   .stat-grid { grid-template-columns: 1fr 1fr; }
   .stat-grid .stat:last-child { grid-column: 1 / -1; }
   .wheel-stage { min-height: 170px; }
-  .wheel { width: min(58vw, 240px); border-width: 8px; }
+  .wheel { width: min(78vw, 340px); border-width: 8px; }
   .wheel-pointer { top: 2px; border-left-width: 10px; border-right-width: 10px; border-top-width: 20px; }
   .wheel-slot-label { font-size: 0.64rem; width: 24px; margin-left: -12px; }
   .bet-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
