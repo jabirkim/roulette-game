@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>카지노 룰렛</title>
+    <title>카지노 룰렛 2인용</title>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
@@ -11,7 +11,7 @@
       <header class="topbar">
         <div>
           <p class="eyebrow">EUROPEAN ROULETTE</p>
-          <h1>카지노 룰렛</h1>
+          <h1>카지노 룰렛 2인용</h1>
           <nav class="game-switch">
             <a class="switch-link active" href="./">룰렛</a>
             <a class="switch-link" href="slot-machine-3x3/">슬롯 3x3</a>
@@ -26,24 +26,44 @@
               <li>단일 숫자 → 35:1</li>
               <li>유럽식 룰렛 → 0~36</li>
             </ul>
-            <p>여러 곳에 동시에 베팅하면 일부 적중해도 <strong>순손익은 마이너스</strong>일 수 있습니다.</p>
+            <p>현재 차례 플레이어의 베팅만 적용되고, 스핀 후 다음 사람 차례로 넘어갑니다.</p>
           </div>
         </details>
       </header>
 
       <main class="main-grid">
         <section class="card status-card">
+          <div class="player-row">
+            <button class="player-card active" id="playerCard0" data-player-card="0" type="button">
+              <span class="player-badge">PLAYER 1</span>
+              <input id="player0Name" class="player-name-input" type="text" value="플레이어 1" maxlength="12" />
+              <div class="player-meta">
+                <span>잔액 <strong id="player0Balance">₩100,000</strong></span>
+                <span>최근 손익 <strong id="player0Net">₩0</strong></span>
+              </div>
+            </button>
+            <div class="turn-pill">현재 차례<br /><strong id="activePlayerName">플레이어 1</strong></div>
+            <button class="player-card" id="playerCard1" data-player-card="1" type="button">
+              <span class="player-badge">PLAYER 2</span>
+              <input id="player1Name" class="player-name-input" type="text" value="플레이어 2" maxlength="12" />
+              <div class="player-meta">
+                <span>잔액 <strong id="player1Balance">₩100,000</strong></span>
+                <span>최근 손익 <strong id="player1Net">₩0</strong></span>
+              </div>
+            </button>
+          </div>
+
           <div class="stat-grid">
             <div class="stat">
-              <span>잔액</span>
+              <span>현재 플레이어 자금</span>
               <strong id="balance">₩100,000</strong>
             </div>
             <div class="stat highlight">
-              <span>총 베팅</span>
+              <span>현재 플레이어 총 베팅</span>
               <strong id="currentBet">₩0</strong>
             </div>
             <div class="stat" id="netStat">
-              <span>최근 순손익</span>
+              <span>현재 플레이어 최근 순손익</span>
               <strong id="lastNet">₩0</strong>
             </div>
           </div>
@@ -70,6 +90,7 @@
               <span>베팅 금액</span>
               <input id="betAmount" type="number" min="1000" step="1000" value="5000" />
             </label>
+            <button id="switchTurn" class="ghost-button">턴 넘기기</button>
             <button id="clearBets" class="ghost-button">초기화</button>
           </div>
 
@@ -105,7 +126,7 @@
 
           <div class="bet-section">
             <div class="section-head">
-              <h2>현재 베팅 위치</h2>
+              <h2><span id="betOwnerName">플레이어 1</span> 베팅 위치</h2>
               <strong id="betCount">0개</strong>
             </div>
             <div id="betChips" class="bet-chips">
@@ -117,7 +138,7 @@
             <button id="spinButton" class="spin-button">스핀</button>
           </div>
 
-          <div class="message-box" id="resultText">베팅을 올리고 휠을 돌리세요.</div>
+          <div class="message-box" id="resultText">플레이어 이름을 정하고 베팅한 뒤 휠을 돌리세요.</div>
         </section>
       </main>
     </div>
