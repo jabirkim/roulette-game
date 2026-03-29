@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>슬롯 3x3</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">CASINO SLOT 3x3</p>
+          <h1>슬롯머신 3x3</h1>
+          <nav class="game-switch">
+            <a class="switch-link" href="../">룰렛</a>
+            <a class="switch-link active" href="./">슬롯 3x3</a>
+          </nav>
+        </div>
+        <details class="detail-box">
+          <summary>자세히</summary>
+          <div class="detail-content">
+            <p><strong>라인</strong></p>
+            <ul>
+              <li>가로 3줄</li>
+              <li>세로 3줄</li>
+              <li>대각선 2줄</li>
+            </ul>
+            <p>같은 심볼 3개가 한 줄이면 당첨됩니다.</p>
+          </div>
+        </details>
+      </header>
+
+      <main class="main-grid single-layout">
+        <section class="card status-card">
+          <div class="stat-grid">
+            <div class="stat">
+              <span>잔액</span>
+              <strong id="balance">₩100,000</strong>
+            </div>
+            <div class="stat highlight">
+              <span>베팅</span>
+              <strong id="betValue">₩5,000</strong>
+            </div>
+            <div class="stat" id="netStat">
+              <span>최근 순손익</span>
+              <strong id="lastNet">₩0</strong>
+            </div>
+          </div>
+        </section>
+
+        <section class="card slot-card">
+          <div class="slot-machine">
+            <div class="slot-grid" id="slotGrid">
+              <div class="slot-cell">🍒</div>
+              <div class="slot-cell">🔔</div>
+              <div class="slot-cell">7</div>
+              <div class="slot-cell">⭐</div>
+              <div class="slot-cell">💎</div>
+              <div class="slot-cell">🍋</div>
+              <div class="slot-cell">🍀</div>
+              <div class="slot-cell">7</div>
+              <div class="slot-cell">🍒</div>
+            </div>
+          </div>
+
+          <div class="control-panel">
+            <div class="amount-row">
+              <label class="field grow">
+                <span>베팅 금액</span>
+                <input id="betAmount" type="number" min="1000" step="1000" value="5000" />
+              </label>
+              <button id="spinButton" class="spin-button">스핀</button>
+            </div>
+
+            <div class="preset-row">
+              <button class="bet-button preset" data-amount="1000">1천</button>
+              <button class="bet-button preset" data-amount="5000">5천</button>
+              <button class="bet-button preset" data-amount="10000">1만</button>
+              <button class="bet-button preset" data-amount="30000">3만</button>
+            </div>
+
+            <div class="message-box" id="resultText">스핀 버튼을 눌러 슬롯을 돌리세요.</div>
+
+            <div class="bet-section">
+              <div class="section-head">
+                <h2>최근 당첨 라인</h2>
+                <strong id="lineCount">0줄</strong>
+              </div>
+              <div id="linePreview" class="bet-chips">
+                <span class="chip placeholder-chip">아직 당첨 라인이 없습니다.</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
