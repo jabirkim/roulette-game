@@ -70,6 +70,9 @@
         </section>
 
         <section class="card wheel-card">
+          <div class="wheel-action-bar wheel-action-top">
+            <button id="spinButton" class="spin-button">스핀</button>
+          </div>
           <div class="wheel-stage">
             <div class="wheel-glow"></div>
             <div class="wheel" id="wheel">
@@ -82,9 +85,6 @@
             <span>최근 결과</span>
             <strong id="lastResultValue">대기 중</strong>
           </div>
-          <div class="wheel-action-bar">
-            <button id="spinButton" class="spin-button">스핀</button>
-          </div>
         </section>
 
         <section class="card control-card">
@@ -94,7 +94,11 @@
               <input id="betAmount" type="number" min="1000" step="1000" value="5000" />
             </label>
             <button id="switchTurn" class="ghost-button">플레이어 전환</button>
-            <button id="clearBets" class="ghost-button">초기화</button>
+          </div>
+
+          <div class="bet-tools-row">
+            <button id="removeLastBet" class="ghost-button">하나 취소</button>
+            <button id="clearBets" class="ghost-button danger-button">전부 취소</button>
           </div>
 
           <div class="bet-section">
