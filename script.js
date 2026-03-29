@@ -29,6 +29,7 @@ const elements = {
   spinButton: document.getElementById("spinButton"),
   addNumberBet: document.getElementById("addNumberBet"),
   wheel: document.getElementById("wheel"),
+  wheelNumberLayer: document.getElementById("wheelNumberLayer"),
   lastResultValue: document.getElementById("lastResultValue"),
   lastNet: document.getElementById("lastNet"),
   netStat: document.getElementById("netStat"),
@@ -67,6 +68,31 @@ function renderNet() {
   elements.netStat.classList.remove("net-win", "net-lose");
   if (state.lastNet > 0) elements.netStat.classList.add("net-win");
   if (state.lastNet < 0) elements.netStat.classList.add("net-lose");
+}
+
+function renderWheelFace() {
+  const slice = 360 / EUROPEAN_WHEEL_ORDER.length;
+  const stops = [];
+
+  EUROPEAN_WHEEL_ORDER.forEach((num, index) => {
+    const color = num === 0 ? "#0e6e47" : RED_NUMBERS.has(num) ? "#c7423d" : "#111";
+    const start = (index * slice).toFixed(4);
+    const end = ((index + 1) * slice).toFixed(4);
+    stops.push(`${color} ${start}deg ${end}deg`);
+  });
+
+  elements.wheel.style.background = `radial-gradient(circle at center, #422711 0 19%, transparent 19%), conic-gradient(from -90deg, ${stops.join(", ")})`;
+
+  const radius = Math.max(72, Math.round(elements.wheel.clientWidth * 0.42));
+  elements.wheelNumberLayer.innerHTML = "";
+  EUROPEAN_WHEEL_ORDER.forEach((num, index) => {
+    const angle = -90 + index * slice + slice / 2;
+    const label = document.createElement("span");
+    label.className = "wheel-slot-label";
+    label.textContent = String(num);
+    label.style.transform = `rotate(${angle}deg) translateY(-${radius}px) rotate(${90 - angle}deg)`;
+    elements.wheelNumberLayer.appendChild(label);
+  });
 }
 
 function syncUi() {
@@ -218,6 +244,8 @@ elements.addNumberBet.addEventListener("click", () => {
 
 elements.clearBets.addEventListener("click", clearBets);
 elements.spinButton.addEventListener("click", startSpin);
+window.addEventListener("resize", renderWheelFace);
 
 elements.lastResultValue.textContent = state.lastResultLabel;
+renderWheelFace();
 syncUi();
