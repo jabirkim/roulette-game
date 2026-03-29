@@ -26,7 +26,7 @@
               <li>단일 숫자 → 35:1</li>
               <li>유럽식 룰렛 → 0~36</li>
             </ul>
-            <p>현재 차례 플레이어의 베팅만 적용되고, 스핀 후 다음 사람 차례로 넘어갑니다.</p>
+            <p>두 플레이어가 각자 베팅하고, 스핀 1번으로 두 사람 베팅이 동시에 정산됩니다.</p>
           </div>
         </details>
       </header>
@@ -42,7 +42,7 @@
                 <span>최근 손익 <strong id="player0Net">₩0</strong></span>
               </div>
             </button>
-            <div class="turn-pill">현재 차례<br /><strong id="activePlayerName">플레이어 1</strong></div>
+            <div class="turn-pill">현재 베팅 편집중<br /><strong id="activePlayerName">플레이어 1</strong></div>
             <button class="player-card" id="playerCard1" data-player-card="1" type="button">
               <span class="player-badge">PLAYER 2</span>
               <input id="player1Name" class="player-name-input" type="text" value="플레이어 2" maxlength="12" />
@@ -55,15 +55,15 @@
 
           <div class="stat-grid">
             <div class="stat">
-              <span>현재 플레이어 자금</span>
+              <span>선택 플레이어 자금</span>
               <strong id="balance">₩100,000</strong>
             </div>
             <div class="stat highlight">
-              <span>현재 플레이어 총 베팅</span>
+              <span>선택 플레이어 총 베팅</span>
               <strong id="currentBet">₩0</strong>
             </div>
             <div class="stat" id="netStat">
-              <span>현재 플레이어 최근 순손익</span>
+              <span>선택 플레이어 최근 순손익</span>
               <strong id="lastNet">₩0</strong>
             </div>
           </div>
@@ -90,7 +90,7 @@
               <span>베팅 금액</span>
               <input id="betAmount" type="number" min="1000" step="1000" value="5000" />
             </label>
-            <button id="switchTurn" class="ghost-button">턴 넘기기</button>
+            <button id="switchTurn" class="ghost-button">플레이어 전환</button>
             <button id="clearBets" class="ghost-button">초기화</button>
           </div>
 
