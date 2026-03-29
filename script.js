@@ -8,11 +8,13 @@ const RED_NUMBERS = new Set([
 ]);
 
 const state = {
-  balance: 100000,
-  bets: [],
+  players: [
+    { name: "플레이어 1", balance: 100000, bets: [], lastNet: 0 },
+    { name: "플레이어 2", balance: 100000, bets: [], lastNet: 0 },
+  ],
+  activePlayer: 0,
   isSpinning: false,
   wheelRotation: 0,
-  lastNet: 0,
   lastResultLabel: "대기 중",
 };
 
@@ -22,10 +24,10 @@ const elements = {
   resultText: document.getElementById("resultText"),
   betAmount: document.getElementById("betAmount"),
   singleNumber: document.getElementById("singleNumber"),
-  betList: document.getElementById("betList"),
   betCount: document.getElementById("betCount"),
   betChips: document.getElementById("betChips"),
   clearBets: document.getElementById("clearBets"),
+  switchTurn: document.getElementById("switchTurn"),
   spinButton: document.getElementById("spinButton"),
   addNumberBet: document.getElementById("addNumberBet"),
   wheel: document.getElementById("wheel"),
@@ -33,6 +35,12 @@ const elements = {
   lastResultValue: document.getElementById("lastResultValue"),
   lastNet: document.getElementById("lastNet"),
   netStat: document.getElementById("netStat"),
+  activePlayerName: document.getElementById("activePlayerName"),
+  betOwnerName: document.getElementById("betOwnerName"),
+  playerCards: [document.getElementById("playerCard0"), document.getElementById("playerCard1")],
+  playerNames: [document.getElementById("player0Name"), document.getElementById("player1Name")],
+  playerBalances: [document.getElementById("player0Balance"), document.getElementById("player1Balance")],
+  playerNets: [document.getElementById("player0Net"), document.getElementById("player1Net")],
 };
 
 function formatCurrency(value) {
@@ -45,14 +53,18 @@ function formatSignedCurrency(value) {
   return formatCurrency(0);
 }
 
+function currentPlayer() {
+  return state.players[state.activePlayer];
+}
+
 function getBetAmount() {
   const amount = Number(elements.betAmount.value);
   if (!Number.isFinite(amount) || amount <= 0) return null;
   return Math.floor(amount);
 }
 
-function getTotalBet() {
-  return state.bets.reduce((total, bet) => total + bet.amount, 0);
+function getTotalBet(player = currentPlayer()) {
+  return player.bets.reduce((total, bet) => total + bet.amount, 0);
 }
 
 function describeBet(bet) {
@@ -63,11 +75,23 @@ function describeBet(bet) {
 }
 
 function renderNet() {
-  const text = formatSignedCurrency(state.lastNet);
+  const player = currentPlayer();
+  const text = formatSignedCurrency(player.lastNet);
   elements.lastNet.textContent = text;
   elements.netStat.classList.remove("net-win", "net-lose");
-  if (state.lastNet > 0) elements.netStat.classList.add("net-win");
-  if (state.lastNet < 0) elements.netStat.classList.add("net-lose");
+  if (player.lastNet > 0) elements.netStat.classList.add("net-win");
+  if (player.lastNet < 0) elements.netStat.classList.add("net-lose");
+}
+
+function renderPlayers() {
+  state.players.forEach((player, index) => {
+    elements.playerNames[index].value = player.name;
+    elements.playerBalances[index].textContent = formatCurrency(player.balance);
+    elements.playerNets[index].textContent = formatSignedCurrency(player.lastNet);
+    elements.playerCards[index].classList.toggle("active", index === state.activePlayer);
+  });
+  elements.activePlayerName.textContent = currentPlayer().name;
+  elements.betOwnerName.textContent = currentPlayer().name;
 }
 
 function renderWheelFace() {
@@ -83,7 +107,7 @@ function renderWheelFace() {
 
   elements.wheel.style.background = `radial-gradient(circle at center, #422711 0 19%, transparent 19%), conic-gradient(from -90deg, ${stops.join(", ")})`;
 
-  const radius = Math.max(72, Math.round(elements.wheel.clientWidth * 0.42));
+  const radius = Math.max(96, Math.round(elements.wheel.clientWidth * 0.42));
   elements.wheelNumberLayer.innerHTML = "";
   EUROPEAN_WHEEL_ORDER.forEach((num, index) => {
     const angle = -90 + index * slice + slice / 2;
@@ -96,32 +120,29 @@ function renderWheelFace() {
 }
 
 function syncUi() {
-  const totalBet = getTotalBet();
-  elements.balance.textContent = formatCurrency(state.balance);
+  const player = currentPlayer();
+  const totalBet = getTotalBet(player);
+  elements.balance.textContent = formatCurrency(player.balance);
   elements.currentBet.textContent = formatCurrency(totalBet);
   elements.spinButton.disabled = state.isSpinning || totalBet === 0;
   elements.clearBets.disabled = state.isSpinning || totalBet === 0;
+  elements.switchTurn.disabled = state.isSpinning;
+
+  renderPlayers();
   renderNet();
 
-  if (state.bets.length === 0) {
+  if (player.bets.length === 0) {
     elements.betCount.textContent = "0개";
     elements.betChips.innerHTML = '<span class="chip placeholder-chip">아직 베팅이 없습니다.</span>';
-    if (elements.betList) elements.betList.innerHTML = '<li class="placeholder">아직 베팅이 없습니다.</li>';
     return;
   }
 
-  elements.betCount.textContent = `${state.bets.length}개`;
-  elements.betChips.innerHTML = state.bets
+  elements.betCount.textContent = `${player.bets.length}개`;
+  elements.betChips.innerHTML = player.bets
     .map(
       (bet) => `<span class="chip"><span>${describeBet(bet)}</span><span class="chip-amount">${formatCurrency(bet.amount)}</span></span>`
     )
     .join("");
-
-  if (elements.betList) {
-    elements.betList.innerHTML = state.bets
-      .map((bet) => `<li><span>${describeBet(bet)}</span><strong>${formatCurrency(bet.amount)}</strong></li>`)
-      .join("");
-  }
 }
 
 function setMessage(text) {
@@ -129,24 +150,31 @@ function setMessage(text) {
 }
 
 function canAfford(amount) {
-  return getTotalBet() + amount <= state.balance;
+  return getTotalBet(currentPlayer()) + amount <= currentPlayer().balance;
 }
 
 function addBet(type, value) {
   if (state.isSpinning) return;
   const amount = getBetAmount();
   if (!amount) return setMessage("베팅 금액을 1,000원 이상으로 입력하세요.");
-  if (!canAfford(amount)) return setMessage("잔액보다 많은 금액을 올릴 수 없습니다.");
+  if (!canAfford(amount)) return setMessage(`${currentPlayer().name} 잔액보다 많은 금액을 올릴 수 없습니다.`);
 
-  state.bets.push({ type, value, amount });
-  setMessage(`${describeBet({ type, value })}에 ${formatCurrency(amount)} 베팅했습니다.`);
+  currentPlayer().bets.push({ type, value, amount });
+  setMessage(`${currentPlayer().name} → ${describeBet({ type, value })}에 ${formatCurrency(amount)} 베팅했습니다.`);
   syncUi();
 }
 
 function clearBets() {
   if (state.isSpinning) return;
-  state.bets = [];
-  setMessage("베팅을 모두 비웠습니다.");
+  currentPlayer().bets = [];
+  setMessage(`${currentPlayer().name}의 베팅을 모두 비웠습니다.`);
+  syncUi();
+}
+
+function switchTurn() {
+  if (state.isSpinning) return;
+  state.activePlayer = state.activePlayer === 0 ? 1 : 0;
+  setMessage(`이제 ${currentPlayer().name} 차례입니다.`);
   syncUi();
 }
 
@@ -182,41 +210,44 @@ function animateWheel(result) {
 }
 
 function settleBets(result) {
-  const totalBet = getTotalBet();
+  const player = currentPlayer();
+  const totalBet = getTotalBet(player);
   let winnings = 0;
   const winningBets = [];
 
-  for (const bet of state.bets) {
+  for (const bet of player.bets) {
     if (isWinningBet(bet, result)) {
       winnings += payoutFor(bet);
       winningBets.push(describeBet(bet));
     }
   }
 
-  state.balance = state.balance - totalBet + winnings;
-  state.lastNet = winnings - totalBet;
-  state.bets = [];
+  player.balance = player.balance - totalBet + winnings;
+  player.lastNet = winnings - totalBet;
+  player.bets = [];
 
   const label = resultLabel(result);
   state.lastResultLabel = label;
   elements.lastResultValue.textContent = label;
 
+  const playerName = player.name;
   if (winningBets.length === 0) {
-    setMessage(`결과 ${label} · 적중 없음 · 순손익 ${formatSignedCurrency(state.lastNet)}`);
-  } else if (state.lastNet >= 0) {
-    setMessage(`결과 ${label} · 적중 ${winningBets.join(", ")} · 순손익 ${formatSignedCurrency(state.lastNet)}`);
+    setMessage(`${playerName} 결과 ${label} · 적중 없음 · 순손익 ${formatSignedCurrency(player.lastNet)}`);
+  } else if (player.lastNet >= 0) {
+    setMessage(`${playerName} 결과 ${label} · 적중 ${winningBets.join(", ")} · 순손익 ${formatSignedCurrency(player.lastNet)}`);
   } else {
-    setMessage(`결과 ${label} · 적중 ${winningBets.join(", ")} · 다른 베팅 포함 순손익 ${formatSignedCurrency(state.lastNet)}`);
+    setMessage(`${playerName} 결과 ${label} · 적중 ${winningBets.join(", ")} · 다른 베팅 포함 순손익 ${formatSignedCurrency(player.lastNet)}`);
   }
 
+  state.activePlayer = state.activePlayer === 0 ? 1 : 0;
   syncUi();
 }
 
 function startSpin() {
-  if (state.isSpinning || state.bets.length === 0) return;
+  if (state.isSpinning || currentPlayer().bets.length === 0) return;
   state.isSpinning = true;
   syncUi();
-  setMessage("휠이 회전 중입니다...");
+  setMessage(`${currentPlayer().name}의 휠이 회전 중입니다...`);
   const result = spinResult();
   animateWheel(result);
   window.setTimeout(() => {
@@ -243,8 +274,28 @@ elements.addNumberBet.addEventListener("click", () => {
 });
 
 elements.clearBets.addEventListener("click", clearBets);
+elements.switchTurn.addEventListener("click", switchTurn);
 elements.spinButton.addEventListener("click", startSpin);
 window.addEventListener("resize", renderWheelFace);
+
+elements.playerCards.forEach((card, index) => {
+  card.addEventListener("click", (event) => {
+    if (event.target.tagName.toLowerCase() === "input") return;
+    if (state.isSpinning) return;
+    state.activePlayer = index;
+    setMessage(`이제 ${currentPlayer().name} 차례입니다.`);
+    syncUi();
+  });
+});
+
+elements.playerNames.forEach((input, index) => {
+  input.addEventListener("input", () => {
+    const value = input.value.trim();
+    state.players[index].name = value || `플레이어 ${index + 1}`;
+    syncUi();
+  });
+  input.addEventListener("click", (event) => event.stopPropagation());
+});
 
 elements.lastResultValue.textContent = state.lastResultLabel;
 renderWheelFace();
