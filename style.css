@@ -91,7 +91,7 @@ small { color: rgba(245,233,200,0.72); }
 
 .main-grid {
   display: grid;
-  grid-template-columns: 300px 1fr;
+  grid-template-columns: 420px 1fr;
   gap: 12px;
 }
 
@@ -148,57 +148,36 @@ small { color: rgba(245,233,200,0.72); }
 
 .wheel {
   position: relative;
-  width: min(66vw, 240px);
+  width: min(76vw, 360px);
   aspect-ratio: 1;
   border-radius: 50%;
-  border: 10px solid #6d4a24;
+  border: 12px solid #6d4a24;
   box-shadow:
-    inset 0 0 0 10px #2b1a0b,
+    inset 0 0 0 12px #2b1a0b,
     inset 0 0 40px rgba(0, 0, 0, 0.55),
     0 10px 30px rgba(0, 0, 0, 0.5);
-  background:
-    radial-gradient(circle at center, #422711 0 19%, transparent 19%),
-    conic-gradient(
-      from -90deg,
-      #0e6e47 0deg 9.73deg,
-      #c7423d 9.73deg 19.46deg,
-      #111 19.46deg 29.19deg,
-      #c7423d 29.19deg 38.92deg,
-      #111 38.92deg 48.65deg,
-      #c7423d 48.65deg 58.38deg,
-      #111 58.38deg 68.11deg,
-      #c7423d 68.11deg 77.84deg,
-      #111 77.84deg 87.57deg,
-      #c7423d 87.57deg 97.3deg,
-      #111 97.3deg 107.03deg,
-      #c7423d 107.03deg 116.76deg,
-      #111 116.76deg 126.49deg,
-      #c7423d 126.49deg 136.22deg,
-      #111 136.22deg 145.95deg,
-      #c7423d 145.95deg 155.68deg,
-      #111 155.68deg 165.41deg,
-      #c7423d 165.41deg 175.14deg,
-      #111 175.14deg 184.87deg,
-      #c7423d 184.87deg 194.6deg,
-      #111 194.6deg 204.33deg,
-      #c7423d 204.33deg 214.06deg,
-      #111 214.06deg 223.79deg,
-      #c7423d 223.79deg 233.52deg,
-      #111 233.52deg 243.25deg,
-      #c7423d 243.25deg 252.98deg,
-      #111 252.98deg 262.71deg,
-      #c7423d 262.71deg 272.44deg,
-      #111 272.44deg 282.17deg,
-      #c7423d 282.17deg 291.9deg,
-      #111 291.9deg 301.63deg,
-      #c7423d 301.63deg 311.36deg,
-      #111 311.36deg 321.09deg,
-      #c7423d 321.09deg 330.82deg,
-      #111 330.82deg 340.55deg,
-      #c7423d 340.55deg 350.28deg,
-      #111 350.28deg 360deg
-    );
+  background: radial-gradient(circle at center, #422711 0 19%, transparent 19%);
   transition: transform 4.8s cubic-bezier(0.18, 0.82, 0.16, 1);
+  overflow: hidden;
+}
+
+.wheel-number-layer {
+  position: absolute;
+  inset: 0;
+}
+
+.wheel-slot-label {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 28px;
+  margin-left: -14px;
+  text-align: center;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #fff7e1;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.85);
+  transform-origin: 50% 50%;
 }
 
 .wheel::before {
@@ -355,7 +334,7 @@ small { color: rgba(245,233,200,0.72); }
 
 @media (max-width: 920px) {
   .main-grid { grid-template-columns: 1fr; }
-  .wheel { width: min(52vw, 220px); }
+  .wheel { width: min(66vw, 300px); }
 }
 
 @media (max-width: 640px) {
@@ -367,8 +346,9 @@ small { color: rgba(245,233,200,0.72); }
   .stat-grid { grid-template-columns: 1fr 1fr; }
   .stat-grid .stat:last-child { grid-column: 1 / -1; }
   .wheel-stage { min-height: 170px; }
-  .wheel { width: min(42vw, 170px); border-width: 8px; }
+  .wheel { width: min(58vw, 240px); border-width: 8px; }
   .wheel-pointer { top: 2px; border-left-width: 10px; border-right-width: 10px; border-top-width: 20px; }
+  .wheel-slot-label { font-size: 0.64rem; width: 24px; margin-left: -12px; }
   .bet-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .bet-button, .ghost-button, .spin-button { padding: 10px 11px; font-size: 0.9rem; }
   .message-box { min-height: 72px; font-size: 0.88rem; }
