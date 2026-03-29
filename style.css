@@ -27,7 +27,7 @@ body {
 button, input { font: inherit; }
 
 .app-shell {
-  width: min(1120px, calc(100% - 20px));
+  width: min(1240px, calc(100% - 20px));
   margin: 0 auto;
   padding: 12px 0 18px;
 }
@@ -103,9 +103,69 @@ small { color: rgba(245,233,200,0.72); }
   padding: 14px;
 }
 
-.status-card {
-  grid-column: 1 / -1;
+.status-card { grid-column: 1 / -1; }
+
+.player-row {
+  display: grid;
+  grid-template-columns: 1fr 180px 1fr;
+  gap: 10px;
+  margin-bottom: 12px;
 }
+
+.player-card {
+  text-align: left;
+  background: rgba(17, 11, 8, 0.5);
+  border: 1px solid rgba(228, 187, 96, 0.16);
+  border-radius: 16px;
+  padding: 12px;
+  color: var(--cream);
+  cursor: pointer;
+}
+
+.player-card.active {
+  border-color: rgba(255, 217, 138, 0.8);
+  box-shadow: 0 0 0 2px rgba(255, 217, 138, 0.18);
+}
+
+.player-badge {
+  display: inline-block;
+  margin-bottom: 8px;
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  color: var(--gold);
+}
+
+.player-name-input {
+  width: 100%;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(228,187,96,0.22);
+  border-radius: 12px;
+  color: var(--cream);
+  padding: 10px 12px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.player-meta {
+  display: grid;
+  gap: 4px;
+  font-size: 0.9rem;
+  color: rgba(245,233,200,0.86);
+}
+
+.player-meta strong { color: var(--gold-bright); }
+
+.turn-pill {
+  display: grid;
+  place-items: center;
+  text-align: center;
+  background: rgba(17, 11, 8, 0.5);
+  border: 1px solid rgba(228, 187, 96, 0.16);
+  border-radius: 16px;
+  padding: 12px;
+  color: rgba(245,233,200,0.86);
+}
+.turn-pill strong { color: var(--gold-bright); font-size: 1.05rem; }
 
 .stat-grid {
   display: grid;
@@ -133,14 +193,14 @@ small { color: rgba(245,233,200,0.72); }
 
 .wheel-stage {
   position: relative;
-  min-height: 260px;
+  min-height: 300px;
   display: grid;
   place-items: center;
 }
 
 .wheel-glow {
   position: absolute;
-  inset: 20% 20%;
+  inset: 16% 16%;
   border-radius: 50%;
   background: radial-gradient(circle, rgba(228, 187, 96, 0.3) 0%, transparent 72%);
   filter: blur(10px);
@@ -170,13 +230,13 @@ small { color: rgba(245,233,200,0.72); }
   position: absolute;
   left: 50%;
   top: 50%;
-  width: 28px;
-  margin-left: -14px;
+  width: 36px;
+  margin-left: -18px;
   text-align: center;
-  font-size: 0.72rem;
-  font-weight: 800;
+  font-size: 0.92rem;
+  font-weight: 900;
   color: #fff7e1;
-  text-shadow: 0 1px 4px rgba(0,0,0,0.85);
+  text-shadow: 0 1px 4px rgba(0,0,0,0.95);
   transform-origin: 50% 50%;
 }
 
@@ -218,14 +278,8 @@ small { color: rgba(245,233,200,0.72); }
 .result-row span { color: rgba(245,233,200,0.72); }
 .result-row strong { color: var(--gold-bright); }
 
-.control-card {
-  display: grid;
-  gap: 10px;
-}
-
-.amount-row,
-.number-row,
-.section-head {
+.control-card { display: grid; gap: 10px; }
+.amount-row, .number-row, .section-head {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -322,7 +376,7 @@ small { color: rgba(245,233,200,0.72); }
 .ghost-button:disabled { cursor: not-allowed; filter: grayscale(0.2) brightness(0.85); }
 
 .message-box {
-  min-height: 60px;
+  min-height: 72px;
   padding: 12px 14px;
   border-radius: 14px;
   background: rgba(255,255,255,0.04);
@@ -334,6 +388,8 @@ small { color: rgba(245,233,200,0.72); }
 
 @media (max-width: 920px) {
   .main-grid { grid-template-columns: 1fr; }
+  .player-row { grid-template-columns: 1fr; }
+  .turn-pill { order: -1; }
   .wheel { width: min(78vw, 420px); }
 }
 
@@ -348,8 +404,8 @@ small { color: rgba(245,233,200,0.72); }
   .wheel-stage { min-height: 170px; }
   .wheel { width: min(78vw, 340px); border-width: 8px; }
   .wheel-pointer { top: 2px; border-left-width: 10px; border-right-width: 10px; border-top-width: 20px; }
-  .wheel-slot-label { font-size: 0.64rem; width: 24px; margin-left: -12px; }
+  .wheel-slot-label { font-size: 0.78rem; width: 30px; margin-left: -15px; }
   .bet-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .bet-button, .ghost-button, .spin-button { padding: 10px 11px; font-size: 0.9rem; }
-  .message-box { min-height: 72px; font-size: 0.88rem; }
+  .message-box { min-height: 88px; font-size: 0.88rem; }
 }
