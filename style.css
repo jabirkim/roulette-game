@@ -278,6 +278,10 @@ small { color: rgba(245,233,200,0.72); }
 .result-row span { color: rgba(245,233,200,0.72); }
 .result-row strong { color: var(--gold-bright); }
 
+.wheel-action-bar {
+  margin-top: 10px;
+}
+
 .control-card { display: grid; gap: 10px; }
 .amount-row, .number-row, .section-head {
   display: flex;
