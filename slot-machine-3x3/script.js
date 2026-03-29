@@ -35,6 +35,7 @@ const elements = {
   betAmount: document.getElementById("betAmount"),
   spinButton: document.getElementById("spinButton"),
   resultText: document.getElementById("resultText"),
+  slotGridWrap: document.getElementById("slotGridWrap"),
   slotGrid: document.getElementById("slotGrid"),
   slotLines: document.getElementById("slotLines"),
   fxLayer: document.getElementById("fxLayer"),
@@ -61,7 +62,6 @@ function renderGrid() {
   const cells = elements.slotGrid.querySelectorAll(".slot-cell");
   cells.forEach((cell, index) => {
     cell.textContent = state.grid[index];
-    cell.classList.remove("hit");
   });
 }
 
@@ -72,21 +72,26 @@ function clearWinEffects() {
   elements.slotGrid.querySelectorAll(".slot-cell").forEach((cell) => cell.classList.remove("hit"));
 }
 
-function lineCenter(index) {
-  const col = index % 3;
-  const row = Math.floor(index / 3);
-  const x = 50 + col * 100;
-  const y = 50 + row * 100;
-  return { x, y };
+function cellCenter(index) {
+  const wrapRect = elements.slotGridWrap.getBoundingClientRect();
+  const cell = elements.slotGrid.children[index];
+  const rect = cell.getBoundingClientRect();
+  return {
+    x: rect.left - wrapRect.left + rect.width / 2,
+    y: rect.top - wrapRect.top + rect.height / 2,
+  };
 }
 
 function renderWinLines(lines) {
   elements.slotLines.innerHTML = "";
   if (!lines.length) return;
 
+  const wrapRect = elements.slotGridWrap.getBoundingClientRect();
+  elements.slotLines.setAttribute('viewBox', `0 0 ${wrapRect.width} ${wrapRect.height}`);
+
   lines.forEach((line) => {
-    const start = lineCenter(line[0]);
-    const end = lineCenter(line[2]);
+    const start = cellCenter(line[0]);
+    const end = cellCenter(line[2]);
     const lineEl = document.createElementNS("http://www.w3.org/2000/svg", "line");
     lineEl.setAttribute("x1", start.x);
     lineEl.setAttribute("y1", start.y);
@@ -222,6 +227,7 @@ function finishSpin() {
   state.balance = state.balance - state.bet + payout;
   state.lastNet = payout - state.bet;
   state.isSpinning = false;
+  syncUi();
   renderWins(wins);
 
   if (wins.length) {
@@ -235,8 +241,6 @@ function finishSpin() {
     clearWinEffects();
     setMessage(`꽝! 순손익 ${signedCurrency(state.lastNet)}`);
   }
-
-  syncUi();
 }
 
 document.querySelectorAll(".preset").forEach((button) => {
