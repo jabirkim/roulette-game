@@ -193,6 +193,19 @@ h2 { font-size: 1rem; color: var(--gold-bright); }
   20% { transform: translate(-50%, -50%) scale(1.08); opacity: 1; }
   100% { transform: translate(-50%, -50%) scale(1); opacity: 0.98; }
 }
+.top-action-bar {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.stop-button {
+  min-width: 110px;
+}
+.stop-button:disabled {
+  cursor: not-allowed;
+  filter: grayscale(0.2) brightness(0.85);
+}
 .control-panel {
   display: grid;
   gap: 12px;
@@ -219,7 +232,7 @@ h2 { font-size: 1rem; color: var(--gold-bright); }
   padding: 11px 12px;
 }
 .grow { flex: 1; }
-.bet-button, .spin-button {
+.bet-button, .spin-button, .ghost-button {
   border: 0;
   border-radius: 14px;
   padding: 12px 14px;
@@ -229,6 +242,10 @@ h2 { font-size: 1rem; color: var(--gold-bright); }
 .bet-button {
   background: linear-gradient(180deg, rgba(228, 187, 96, 0.18), rgba(228, 187, 96, 0.08));
   border: 1px solid rgba(228, 187, 96, 0.24);
+}
+.ghost-button {
+  background: transparent;
+  border: 1px solid rgba(245,233,200,0.18);
 }
 .preset { flex: 1; }
 .spin-button {
@@ -277,7 +294,7 @@ h2 { font-size: 1rem; color: var(--gold-bright); }
 }
 @media (max-width: 640px) {
   .app-shell { width: min(100% - 12px, 100%); }
-  .topbar, .amount-row, .preset-row, .section-head { flex-direction: column; align-items: stretch; }
+  .topbar, .amount-row, .preset-row, .section-head, .top-action-bar { flex-direction: column; align-items: stretch; }
   .stat-grid { grid-template-columns: 1fr 1fr; }
   .stat-grid .stat:last-child { grid-column: 1 / -1; }
   .slot-grid-wrap { width: min(100%, 96vw); }
