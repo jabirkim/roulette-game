@@ -23,6 +23,7 @@ const state = {
   balance: 100000,
   bet: 5000,
   isSpinning: false,
+  spinTimer: null,
   grid: ["🍒", "🔔", "7", "⭐", "💎", "🍋", "🍀", "7", "🍒"],
   lastNet: 0,
 };
@@ -34,6 +35,7 @@ const elements = {
   netStat: document.getElementById("netStat"),
   betAmount: document.getElementById("betAmount"),
   spinButton: document.getElementById("spinButton"),
+  stopButton: document.getElementById("stopButton"),
   resultText: document.getElementById("resultText"),
   slotGridWrap: document.getElementById("slotGridWrap"),
   slotGrid: document.getElementById("slotGrid"),
@@ -155,6 +157,7 @@ function syncUi() {
   elements.betValue.textContent = formatCurrency(state.bet);
   elements.betAmount.value = state.bet;
   elements.spinButton.disabled = state.isSpinning;
+  elements.stopButton.disabled = !state.isSpinning;
   renderNet();
   renderGrid();
 }
@@ -211,18 +214,34 @@ function spin() {
   syncUi();
 
   let tick = 0;
-  const timer = setInterval(() => {
+  state.spinTimer = setInterval(() => {
     state.grid = Array.from({ length: 9 }, randomSymbol);
     renderGrid();
     tick += 1;
     if (tick >= 12) {
-      clearInterval(timer);
+      clearInterval(state.spinTimer);
+      state.spinTimer = null;
       finishSpin();
     }
   }, 90);
 }
 
+function stopSpin() {
+  if (!state.isSpinning) return;
+  if (state.spinTimer) {
+    clearInterval(state.spinTimer);
+    state.spinTimer = null;
+  }
+  setMessage("스톱! 현재 결과로 정산합니다...");
+  finishSpin();
+}
+
 function finishSpin() {
+  if (state.spinTimer) {
+    clearInterval(state.spinTimer);
+    state.spinTimer = null;
+  }
+
   const { payout, wins, winLines } = evaluateGrid();
   state.balance = state.balance - state.bet + payout;
   state.lastNet = payout - state.bet;
@@ -249,6 +268,7 @@ document.querySelectorAll(".preset").forEach((button) => {
 
 elements.betAmount.addEventListener("change", (e) => updateBet(e.target.value));
 elements.spinButton.addEventListener("click", spin);
+elements.stopButton.addEventListener("click", stopSpin);
 
 syncUi();
 renderWins([]);
