@@ -52,6 +52,32 @@ h1 { font-size: clamp(1.35rem, 3vw, 2.2rem); color: var(--gold-bright); }
 h2 { font-size: 1rem; color: var(--gold-bright); }
 small { color: rgba(245,233,200,0.72); }
 
+.game-switch {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.switch-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 12px;
+  border-radius: 999px;
+  text-decoration: none;
+  color: var(--cream);
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(228, 187, 96, 0.18);
+  font-size: 0.9rem;
+}
+
+.switch-link.active {
+  background: linear-gradient(135deg, #ffd98a, #b47b20);
+  color: #1f1105;
+  font-weight: 800;
+}
+
 .detail-box {
   background: rgba(17, 11, 8, 0.46);
   border: 1px solid rgba(228, 187, 96, 0.14);
